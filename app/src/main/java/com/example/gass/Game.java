@@ -31,6 +31,8 @@ public class Game extends Fragment {
         super.onActivityCreated(savedInstanceState);
         mViewModel = ViewModelProviders.of(this).get(GameViewModel.class);
         // TODO: Use the ViewModel
+
+
     }
 
 }

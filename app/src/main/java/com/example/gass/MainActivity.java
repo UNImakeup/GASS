@@ -4,42 +4,104 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
+    private FirebaseAuth firebaseAuth;
+    private FirebaseUser user;
+    private Button loginButton;
+    private EditText emailText;
+    private EditText passwordText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //kan bare rykkes ind i anden aktivitet + copy+paste xml fil. Så lave denne til login side, ligesom i den anden app.
+        //Ovenstående kommentar er done
 
-        BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
-        bottomNav.setOnNavigationItemSelectedListener(navListener);
+        loginButton = findViewById(R.id.loginButton);
+        emailText = findViewById(R.id.email);
+        passwordText = findViewById(R.id.password);
+        Button createUserButton = findViewById(R.id.createUser);
+        firebaseAuth = FirebaseAuth.getInstance();
+        user = firebaseAuth.getCurrentUser();
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeScreen()).commit();
+
+        if(user != null){ //Hvis brugeren er logget ind, sender vi dem til hjemmeskærmen/navigationsmenu.
+            Intent createUserIntent = new Intent(MainActivity.this, NavigationActivity.class);
+            startActivity(createUserIntent);
+        }
+
+
+        //Lav login feature, så er brugersystemet oppe at køre. Mangler selvfølgelig det med realtime databasen, men nærmest done.
+        //Ovenstående er done
+
+
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String email=emailText.getText().toString();
+                String password=passwordText.getText().toString();
+                //Tjekker om parameter er null, hvis true, dukker en besked op med at der skal indtastes en email brr brr
+
+                if(TextUtils.isEmpty(email)){
+                    emailText.setError("Enter your email");
+                    return;
+                }
+                //Tjekker om parameter er null, hvis true, dukker en besked op med at der skal indtastes en kode brr brr
+
+                else if(TextUtils.isEmpty(password)){
+                    passwordText.setError("Enter your password");
+                    return;
+                }
+                login(email, password);
+            }
+        });
+
+
+        createUserButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent createUserIntent = new Intent(MainActivity.this, CreateUserActivity.class);
+                startActivity(createUserIntent);
+            }
+        });
 
     }
-    private BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            Fragment selectedFragment = null;
 
-            switch (item.getItemId()){
-                case R.id.nav_home:
-                    selectedFragment = new HomeScreen();
-                    break;
-                case R.id.nav_game:
-                    selectedFragment = new Game();
-                    break;
-                case R.id.nav_social:
-                    selectedFragment = new Social();
-                    break;
+    private void login(String email, String password){
+
+        // Når brugerens forsøg på login er succesfuld, vil det føre dem til en tom side som indeholder en knap som returner dem login siden.
+        firebaseAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) { //https://www.youtube.com/watch?v=Z-RE1QuUWPg
+                if(task.isSuccessful()){
+                    Toast.makeText(MainActivity.this,"Login Successfully",Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(MainActivity.this, NavigationActivity.class);
+                    startActivity(intent);
+                    //Kunne returne værdi i stedet, for at man så kan bruge det til at beslutte om man kan videre, for mvvm struktur.
+                    finish();
+                }
+                else{
+                    Toast.makeText(MainActivity.this,"Sign In fail!",Toast.LENGTH_LONG).show();
+                }
             }
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
-            return true;
-        }
-    };
+        });
+    }
+
 }

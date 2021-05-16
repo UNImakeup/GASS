@@ -42,13 +42,11 @@ public class MainActivity extends AppCompatActivity {
         Button createUserButton = findViewById(R.id.createUser);
         firebaseAuth = FirebaseAuth.getInstance();
         user = firebaseAuth.getCurrentUser();
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("message");
 
         if(user != null){ //Hvis brugeren er logget ind, sender vi dem til hjemmeskærmen/navigationsmenu.
             Intent createUserIntent = new Intent(MainActivity.this, NavigationActivity.class);
             startActivity(createUserIntent);
-            myRef.setValue("Hello, World!");
+            //myRef.setValue("Hello, World!");
 
         }
 

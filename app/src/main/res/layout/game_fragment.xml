@@ -14,5 +14,16 @@
         android:text="@string/game"
         android:textSize="30sp" />
 
+    <ImageButton android:layout_height="84dp" android:layout_width="98dp" android:src="?android:attr/textSelectHandle" android:layout_marginTop="130dp" android:layout_centerHorizontal="true" android:layout_alignParentTop="true" android:id="@+id/p5Button"/>
+
+    <ImageButton
+        android:id="@+id/workoutButton"
+        android:layout_width="99dp"
+        android:layout_height="62dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="243dp"
+        android:src="?android:attr/textSelectHandleLeft" />
+
 
 </RelativeLayout>

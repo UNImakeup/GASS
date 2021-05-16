@@ -18,6 +18,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class CreateUserActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
@@ -26,12 +28,16 @@ public class CreateUserActivity extends AppCompatActivity {
     private EditText emailText;
     private EditText password1;
     private EditText password2;
+    private FirebaseDatabase database;
+    private DatabaseReference myRefUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_user);
         firebaseAuth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance();
+        myRefUser = database.getReference("user");
 
         createUserButton = findViewById(R.id.createUserButton);
         usernameText = findViewById(R.id.userName);
@@ -104,7 +110,10 @@ public class CreateUserActivity extends AppCompatActivity {
                             .setDisplayName(username)
                             .build();
                     firebaseAuth.getCurrentUser().updateProfile(profileUpdates);
+                    //Virker ikke lige, kan ikke få adgang til username, tror den skal være final af en eller anden grund. Kan jeg godt bare ændre om lidt, ikke så vigtigt though.
                      */
+
+                    myRefUser.child(firebaseAuth.getUid()).setValue(""); //Send data to database
                     Toast.makeText(CreateUserActivity.this,"Successfully registered",Toast.LENGTH_LONG).show();
                     Intent intent=new Intent(CreateUserActivity.this, NavigationActivity.class);
                     //Kunne også her returne,  så vi kan bruge den værdi til at ændre activity

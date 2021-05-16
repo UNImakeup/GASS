@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".WorkoutActivity">
+
+    <EditText android:layout_height="wrap_content" android:layout_width="wrap_content" app:layout_constraintTop_toBottomOf="@id/joinCompTxt" app:layout_constraintStart_toStartOf="parent" app:layout_constraintHorizontal_bias="0.497" app:layout_constraintEnd_toEndOf="parent" android:inputType="textPersonName" android:ems="10" android:layout_marginTop="51dp" android:id="@+id/joinCompInput"/>
+
+    <Button android:layout_height="wrap_content" android:layout_width="wrap_content" app:layout_constraintTop_toBottomOf="@+id/joinCompInput" app:layout_constraintStart_toStartOf="parent" app:layout_constraintHorizontal_bias="0.498" app:layout_constraintEnd_toEndOf="parent" android:layout_marginTop="27dp" android:id="@+id/joinCompBtn" android:text="@string/joinCompBtn"/>
+
+    <Button android:layout_height="wrap_content" android:layout_width="wrap_content" app:layout_constraintStart_toStartOf="parent" app:layout_constraintHorizontal_bias="0.498" app:layout_constraintEnd_toEndOf="parent" android:id="@+id/createCompBtn" android:text="@string/createCompBtn" app:layout_constraintBottom_toTopOf="@+id/newCompInfo" android:layout_marginBottom="44dp"/>
+
+    <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" app:layout_constraintStart_toStartOf="parent" app:layout_constraintHorizontal_bias="0.498" app:layout_constraintEnd_toEndOf="parent" android:id="@+id/newCompInfo" android:text="@string/newCompInfo" android:layout_marginBottom="159dp" app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" app:layout_constraintStart_toStartOf="parent" app:layout_constraintHorizontal_bias="0.501" app:layout_constraintEnd_toEndOf="parent" android:id="@+id/createCompTxt" android:text="@string/createCompTxt" app:layout_constraintBottom_toTopOf="@id/createCompBtn" android:layout_marginBottom="49dp"/>
+
+    <TextView android:layout_height="48dp" android:layout_width="353dp" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" android:layout_marginTop="34dp" android:id="@+id/joinCompTxt" android:text="@string/joinCompTxt" app:layout_constraintTop_toTopOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

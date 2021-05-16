@@ -7,4 +7,9 @@
     <string name="game">Game</string>
     <string name="createUser">Create User</string>
     <string name="logout">Logout</string>
+    <string name="joinCompBtn">Join Competition</string>
+    <string name="createCompBtn">Create Competition</string>
+    <string name="createCompTxt">Create a competition by clicking the button below</string>
+    <string name="newCompInfo" />
+    <string name="joinCompTxt" >Join an existing competition by writing the CompID in the field below</string>
 </resources>

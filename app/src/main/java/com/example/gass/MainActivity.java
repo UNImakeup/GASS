@@ -19,6 +19,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
@@ -40,11 +42,14 @@ public class MainActivity extends AppCompatActivity {
         Button createUserButton = findViewById(R.id.createUser);
         firebaseAuth = FirebaseAuth.getInstance();
         user = firebaseAuth.getCurrentUser();
-
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("message");
 
         if(user != null){ //Hvis brugeren er logget ind, sender vi dem til hjemmeskærmen/navigationsmenu.
             Intent createUserIntent = new Intent(MainActivity.this, NavigationActivity.class);
             startActivity(createUserIntent);
+            myRef.setValue("Hello, World!");
+
         }
 
 

@@ -160,8 +160,8 @@ public class WorkoutActivity extends AppCompatActivity {
                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                                     // If currentuser has joined, hvilket de har ifølge ovenstående, så if user2 has joined, start countdown timer der starter træningen når færdig.
                                     //Ved ikke om dette kode står det forkerte sted though. Om det skal udenfor denne search og bare skal tjekke om der er 2 brugere på den comp som den nuværende bruger er på.
-                                    //Hvis man dog har en gammel comp vil den dog igangsætte, med mindre vi sletter den efter, hvilket kan gøres ved at skrive "" ved tallet i guess. Så ville det være rigtigt, hvis onCreate kører som loop agtig. Det ved jeg faktisk ikke, men hvis den er i toppen og hele tiden tjekker burde det jo fungere.
-                                    
+                                    //Hvis man dog har en gammel comp vil den dog igangsætte, med mindre vi sletter den efter, hvilket kan gøres ved at skrive "" ved tallet i guess. Så bare give en 1 point i highscore/level hvis man vinder. Så ville det være rigtigt, hvis onCreate kører som loop agtig. Det ved jeg faktisk ikke, men hvis den er i toppen og hele tiden tjekker burde det jo fungere.
+
                                 }
 
                                 @Override

@@ -5,6 +5,7 @@ public class User {
     private String user;
     private int competitionID;
     private int userCompetitionID;
+    private int otherUserCompID;
 
     private static User instance;
 
@@ -44,5 +45,12 @@ public class User {
         this.userCompetitionID = userCompetitionID;
     }
 
+    public int getOtherUserCompID() {
+        return otherUserCompID;
+    }
+
+    public void setOtherUserCompID(int otherUserCompID) {
+        this.otherUserCompID = otherUserCompID;
+    }
 }
 

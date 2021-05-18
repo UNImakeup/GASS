@@ -3,6 +3,7 @@ package com.example.gass;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -24,6 +25,7 @@ public class WorkoutActivity extends AppCompatActivity {
     private DatabaseReference myRefUser;
     private DatabaseReference myRefComp;
     private FirebaseAuth firebaseAuth;
+    private ValueEventListener listener;
 
     String userID;
 
@@ -64,19 +66,134 @@ public class WorkoutActivity extends AppCompatActivity {
         createCompNewInfo = findViewById(R.id.newCompInfo);
 
         firebaseAuth = FirebaseAuth.getInstance();
-        userID = firebaseAuth.getUid();
+        userID = firebaseAuth.getUid(); //Henter ID fra firebase. Tror der er noget der går galt her. Som om den ikke logger ud.
         user = User.getInstance();
         user.setUser(userID);
+        //Her sætter vi den nuværende bruger til at være det ID. Det gemmes dog kun i rammen.
 
         database = FirebaseDatabase.getInstance();
         myRefUser = database.getReference("user");
         myRefComp = database.getReference("competition");
 
 
+        //Her henter vi brugerens compID, for at kunne bruge den i næste lyt til databasen (nedenunder). Så det eneste nedenstående blok gør, er at hente brugerens compID, så vi kan bruge det når vi skal se om konkurrenten er der.
+        // Vi gør dette, da vi kun behøver at lytte på  det en gang (addlistenerforsinglevalueevent), samt fordi det er besværligt/uoverskueligt at skulle lytte efter meget forskellig data i samme blok.
+        myRefUser.addListenerForSingleValueEvent(new ValueEventListener() {
+            int competitionID;
+            int userCompetitionID;
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int otherUserCompID;
+                if(dataSnapshot.child(user.getUser()).child("CompetitionID").exists()) { //Hvis den nuværende bruger er en del af en competition. Her trækker den på den comp brugeren sidst har joinet.
+                    competitionID =  dataSnapshot.child(user.getUser()).child("CompetitionID").getValue(Integer.class);
+                    user.setCompetitionID(competitionID); //Selve ID'et på konkurrencen gemmes
+                    userCompetitionID = Integer.parseInt(dataSnapshot.child(user.getUser()).child("CompetitionID" + competitionID).
+                            child(user.getUser() + "UserValue").getValue(String.class));
+                    user.setUserCompetitionID(userCompetitionID); //Selve ID'et på brugeren i konkurrencen (1 eller 2) gemmes.
+
+                        if (userCompetitionID == 1) { //Finder den anden brugers id baseret på ens egen, da der kun burde være 2 i konkurrencen.
+                            otherUserCompID = 2;
+                        } else {
+                            otherUserCompID = 1;
+                        }
+                        user.setOtherUserCompID(otherUserCompID);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
 
+        //her lave ny listener, der venter på at den anden joiner og sætter countdown igang. Kan hide og show timer i guess.
+        listener = myRefComp.addValueEventListener(new ValueEventListener() { //Tror jeg skal have selve værdien der opdateres her. Det kræver at jeg gemmer otherusercompID i brugeren
+            //Boolean ass = false;
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                // If currentuser has joined, hvilket de har ifølge ovenstående, så if user2 has joined, start countdown timer der starter træningen når færdig.
+                //Ved ikke om dette kode står det forkerte sted though. Om det skal udenfor denne search og bare skal tjekke om der er 2 brugere på den comp som den nuværende bruger er på.
+                //Hvis man dog har en gammel comp vil den dog igangsætte, med mindre vi sletter den efter, hvilket kan gøres ved at skrive "" ved tallet i guess. Så bare give en 1 point i highscore/level hvis man vinder. Så ville det være rigtigt, hvis onCreate kører som loop agtig. Det ved jeg faktisk ikke, men hvis den er i toppen og hele tiden tjekker burde det jo fungere.
+                //Hvordan tjekker jeg om anden bruger er joinet?
+                /*
+                if(ass){
+                    joinCompTxt.setText("fack");
+                } else {
+                    joinCompTxt.setText("pls");
+                }
+                ass = true;
+                 */
+
+                //Hvordan henter vi den anden brugers compID uden at bruge user.getotherusercompid, eller bare at gemme den der, da den ikke opdateres lige nu.
+                if(user.getCompetitionID() == 1){ //Dette er tilføjet, hvis man trykker create comp.
+                    user.setOtherUserCompID(2);
+                }
+
+                if (snapshot.child(String.valueOf(user.getCompetitionID())).exists()) { //hvis den nuværende bruger er en del af en competition. Et eller andet her fungerer ikke.
+                    if (snapshot.child(String.valueOf(user.getCompetitionID())).child(String.valueOf(user.getOtherUserCompID())).exists()) { //Hvis den anden bruger eksisterer. Skal lige tilføje otherusercomp fra user
+                        //countdowntimer og næste aktivitet. Starter bare med næste aktivitet.
+                        //onStop() køres automatisk, hvor lytteren stopper.
+                        /*
+                        String ass = snapshot.child(String.valueOf(user.getCompetitionID())).child(String.valueOf(user.getOtherUserCompID())).getValue().toString();
+                        String assntitty = snapshot.child(String.valueOf(user.getCompetitionID())).child(String.valueOf(user.getUserCompetitionID())).getValue().toString();
+                        joinCompTxt.setText(ass + "    " + assntitty + "     " + user.getCompetitionID());
+                         */
+
+                        //Inde i WorkoutFinished kan man så slette konkurrencen, både fra brugeren og comp. Behøver dog kun at gøre det fra brugeren, tbh. Så bare
+                        //myRefComp.child(String.valueOf(user.getCompetitionID())).removeValue();
+                        myRefUser.child(user.getUser()).child("CompetitionID").removeValue();
 
 
+                        //Virker nu, her skal der bare være timer. Tror det burde virke for begge ender. For at den ikke går direkte videre, kan man slette konkurrencen efter, det burde løse det.
+                        //Virker ikke for brugeren der joiner.
+                        Intent intent = new Intent(WorkoutActivity.this, WorkoutFinished.class);
+                        startActivity(intent);
+                    }
+                }
+                //Det her virker nu. Hvis den anden er joinet. Ikke helt sikker på hvad problemet var. Er træt og ændrede en masse ting, men det virker nu.
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+        /*
+        //her lave ny listener, der venter på at den anden joiner og sætter countdown igang. Kan hide og show timer i guess.
+        listener = myRefComp.addValueEventListener(new ValueEventListener() { //Tror jeg skal have selve værdien der opdateres her. Det kræver at jeg gemmer otherusercompID i brugeren
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                // If currentuser has joined, hvilket de har ifølge ovenstående, så if user2 has joined, start countdown timer der starter træningen når færdig.
+                //Ved ikke om dette kode står det forkerte sted though. Om det skal udenfor denne search og bare skal tjekke om der er 2 brugere på den comp som den nuværende bruger er på.
+                //Hvis man dog har en gammel comp vil den dog igangsætte, med mindre vi sletter den efter, hvilket kan gøres ved at skrive "" ved tallet i guess. Så bare give en 1 point i highscore/level hvis man vinder. Så ville det være rigtigt, hvis onCreate kører som loop agtig. Det ved jeg faktisk ikke, men hvis den er i toppen og hele tiden tjekker burde det jo fungere.
+                //Hvordan tjekker jeg om anden bruger er joinet?
+                if (user.getUserCompetitionID() == 1) { //Finder den anden brugers id baseret på ens egen, da der kun burde være 2 i konkurrencen.
+                    user.setOtherUserCompID(2);
+                }
+
+                if (snapshot.child(String.valueOf(user.getCompetitionID())).exists()) { //hvis den nuværende bruger er en del af en competition. Et eller andet her fungerer ikke.
+                    if (snapshot.child(String.valueOf(user.getCompetitionID())).child(String.valueOf(user.getOtherUserCompID())).exists()) { //Hvis den anden bruger eksisterer. Skal lige tilføje otherusercomp fra user
+                        //countdowntimer og næste aktivitet. Starter bare med næste aktivitet.
+                        //onStop() køres automatisk, hvor lytteren stopper.
+                        String ass = snapshot.child(String.valueOf(user.getCompetitionID())).child(String.valueOf(user.getOtherUserCompID())).getValue().toString();
+                        String assntitty = snapshot.child(String.valueOf(user.getCompetitionID())).child(String.valueOf(user.getUserCompetitionID())).getValue().toString();
+                        joinCompTxt.setText(ass + "    " + assntitty + "     " + user.getCompetitionID());
+                        //Intent intent = new Intent(WorkoutActivity.this, NavigationActivity.class);
+                        //startActivity(intent);
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+        */
 
         //Enten tilføje user klasse, eller. Tror faktisk jeg skal bruge user klassen, for at have compID i de forskellige kald og sådan, hvis jeg husker rigtig.
         //user = User.getInstance(this); //Skal så bare have denne user klasse tilbage i login.
@@ -106,6 +223,11 @@ public class WorkoutActivity extends AppCompatActivity {
                                     myRefUser.child(user.getUser()).child("CompetitionID" + joinCompInput.getText().toString()).child(user.getUser() + "UserValue").setValue("2");
                                     myRefUser.child(user.getUser()).child("CompetitionID").setValue(Integer.parseInt(joinCompInput.getText().toString()));
                                     joinCompTxt.setText("You have now joined the competition");
+
+                                    //Fordi den anden er joinet først, da de lavede den.
+                                    user.setUserCompetitionID(2);
+                                    user.setOtherUserCompID(1);
+                                    user.setCompetitionID(Integer.parseInt(joinCompInput.getText().toString()));
 
                                     //Her sætte timer igang, da begge er joinet og konkurrencen skal i gang.
 
@@ -152,27 +274,10 @@ public class WorkoutActivity extends AppCompatActivity {
                             myRefComp.child(String.valueOf(randomCompNumber)).child("1").setValue(user.getUser());
                             //Alt dette er også inde i databaseSingleton, så kan gøres gennem der.
                             createCompNewInfo.setText("You have now created a new competiton. Send this CompID: " + randomCompNumber + " to compete with them");
-
-                            //her lave ny listener, der venter på at den anden joiner og sætter countdown igang. Kan hide og show timer i guess.
-                           /*
-                            myRefComp.addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    // If currentuser has joined, hvilket de har ifølge ovenstående, så if user2 has joined, start countdown timer der starter træningen når færdig.
-                                    //Ved ikke om dette kode står det forkerte sted though. Om det skal udenfor denne search og bare skal tjekke om der er 2 brugere på den comp som den nuværende bruger er på.
-                                    //Hvis man dog har en gammel comp vil den dog igangsætte, med mindre vi sletter den efter, hvilket kan gøres ved at skrive "" ved tallet i guess. Så bare give en 1 point i highscore/level hvis man vinder. Så ville det være rigtigt, hvis onCreate kører som loop agtig. Det ved jeg faktisk ikke, men hvis den er i toppen og hele tiden tjekker burde det jo fungere.
-
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
-
-                                }
-                            })
-
-                            */
-
-
+                            //Fordi man er den første der joiner.
+                            user.setUserCompetitionID(1); //har gjort dette, for at valueeventlistener kan bruge den.
+                            user.setOtherUserCompID(2);
+                            user.setCompetitionID(randomCompNumber);
 
                         } else { //Else lav nyt nummer. fordi det allerede findes.
                             createCompNewInfo.setText("this CompID already exists, press the button again");
@@ -184,29 +289,20 @@ public class WorkoutActivity extends AppCompatActivity {
 
                     }
                 });
-
-
-
-            }; //Så sådan ud før });
-            //onButtonClick: //Ved tryk på start Competition knap
-        /*
-        Random random = new Random();
-        int randomCompNumber = random.nextInt(1000);
-        setText("Competition Number: " + randomCompNumber)
-        if(Totalreps(på database).exists) {
-            myRef.child(String.valueOf(randomCompNumber)).child(user.getUser).setValue(myRefUser.child(user.getUser).child(TotalReps));
-        }
-        setText("Exercise to win the Competition" +
-                "\n Send the code to a friend, for them to join the Competition");
-*/
-            //Skal så bare gemme den nye totalReps under Comp. Så gemme datoen for upload der også. Se om det er mere end en uge siden, for så at slette hvis sandt.
-            //For hver træning lægge en ny totalReps op på både egen bruger (all time), og comp, som slettes hvis der går over en uge. Kan måske også bare være fra hvornår man startede.
-            //Hvis ens værdi så er lavere end modstanderens kan der stå i profil at man taber.
-            //Man kan joine flere comps på samme tid.
-            //Hvis vi har gemt det under brugeren kan det også vises på Profil med all time total Reps.
-            //Tror bare ovenstående udkommenterede kan slettes.
-
+            };
         });
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        myRefComp.removeEventListener(listener);
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onStop() {
+        myRefComp.removeEventListener(listener);
+        super.onStop();
     }
 }

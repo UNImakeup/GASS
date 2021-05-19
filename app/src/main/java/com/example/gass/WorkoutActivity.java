@@ -147,7 +147,6 @@ public class WorkoutActivity extends AppCompatActivity {
 
 
                         //Virker nu, her skal der bare være timer. Tror det burde virke for begge ender. For at den ikke går direkte videre, kan man slette konkurrencen efter, det burde løse det.
-                        //Virker ikke for brugeren der joiner.
                         Intent intent = new Intent(WorkoutActivity.this, WorkoutFinished.class);
                         startActivity(intent);
                     }

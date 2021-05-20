@@ -131,24 +131,26 @@ public class WorkoutActivity extends AppCompatActivity {
                     user.setOtherUserCompID(2);
                 }
 
-                if (snapshot.child(String.valueOf(user.getCompetitionID())).exists()) { //hvis den nuværende bruger er en del af en competition. Et eller andet her fungerer ikke.
-                    if (snapshot.child(String.valueOf(user.getCompetitionID())).child(String.valueOf(user.getOtherUserCompID())).exists()) { //Hvis den anden bruger eksisterer. Skal lige tilføje otherusercomp fra user
-                        //countdowntimer og næste aktivitet. Starter bare med næste aktivitet.
-                        //onStop() køres automatisk, hvor lytteren stopper.
+                if(user.getCompetitionID() != -1) { //Hvis den nuværende bruger er en del af en competition. Her trækker den på den comp brugeren sidst har joinet.
+                    if (snapshot.child(String.valueOf(user.getCompetitionID())).exists()) { //hvis den nuværende bruger er en del af en competition. Et eller andet her fungerer ikke.
+                        if (snapshot.child(String.valueOf(user.getCompetitionID())).child(String.valueOf(user.getOtherUserCompID())).exists()) { //Hvis den anden bruger eksisterer. Skal lige tilføje otherusercomp fra user
+                            //countdowntimer og næste aktivitet. Starter bare med næste aktivitet.
+                            //onStop() køres automatisk, hvor lytteren stopper.
                         /*
                         String ass = snapshot.child(String.valueOf(user.getCompetitionID())).child(String.valueOf(user.getOtherUserCompID())).getValue().toString();
                         String assntitty = snapshot.child(String.valueOf(user.getCompetitionID())).child(String.valueOf(user.getUserCompetitionID())).getValue().toString();
                         joinCompTxt.setText(ass + "    " + assntitty + "     " + user.getCompetitionID());
                          */
 
-                        //Inde i WorkoutFinished kan man så slette konkurrencen, både fra brugeren og comp. Behøver dog kun at gøre det fra brugeren, tbh. Så bare
-                        //myRefComp.child(String.valueOf(user.getCompetitionID())).removeValue();
-                        myRefUser.child(user.getUser()).child("CompetitionID").removeValue();
+                            //Inde i WorkoutFinished kan man så slette konkurrencen, både fra brugeren og comp. Behøver dog kun at gøre det fra brugeren, tbh. Så bare
+                            //myRefComp.child(String.valueOf(user.getCompetitionID())).removeValue();
+                            //myRefUser.child(user.getUser()).child("CompetitionID").removeValue();
 
 
-                        //Virker nu, her skal der bare være timer. Tror det burde virke for begge ender. For at den ikke går direkte videre, kan man slette konkurrencen efter, det burde løse det.
-                        Intent intent = new Intent(WorkoutActivity.this, WorkoutFinished.class);
-                        startActivity(intent);
+                            //Virker nu, her skal der bare være timer. Tror det burde virke for begge ender. For at den ikke går direkte videre, kan man slette konkurrencen efter, det burde løse det.
+                            Intent intent = new Intent(WorkoutActivity.this, PushupActivity.class);
+                            startActivity(intent);
+                        }
                     }
                 }
                 //Det her virker nu. Hvis den anden er joinet. Ikke helt sikker på hvad problemet var. Er træt og ændrede en masse ting, men det virker nu.

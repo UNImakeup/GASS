@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class NavigationActivity extends AppCompatActivity {
+    User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,6 +19,10 @@ public class NavigationActivity extends AppCompatActivity {
 
         BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
         bottomNav.setOnNavigationItemSelectedListener(navListener);
+
+        user = User.getInstance();
+        user.clearComp(); //For at compen ikke begynder til at starte med, da vi sætter den til minus 1, fordi CompID kan være 0. Burde måske bare ændre det til at laveste CompID er 1.
+
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeScreen()).commit();
     }

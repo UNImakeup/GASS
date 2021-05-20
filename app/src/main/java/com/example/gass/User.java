@@ -52,5 +52,11 @@ public class User {
     public void setOtherUserCompID(int otherUserCompID) {
         this.otherUserCompID = otherUserCompID;
     }
+
+    public void clearComp(){
+        this.userCompetitionID = 0;
+        this.otherUserCompID = 0;
+        this.competitionID = -1;
+    }
 }
 

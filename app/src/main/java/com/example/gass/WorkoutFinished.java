@@ -38,9 +38,6 @@ public class WorkoutFinished extends AppCompatActivity {
         user = User.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
 
-        //Her den sletter comp fra bruger. Skal så bare fjernes i WorkoutActivity linje 146 når jeg får lavet det her.
-        myRefUser.child(user.getUser()).child("CompetitionID").removeValue();
-
         backToNavigation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -48,6 +45,8 @@ public class WorkoutFinished extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        //Her skal vi bare vise den andens reps, gemme et point under brugeren, hvis de vandt og Fjerne competitionID værdien efter, hvilket vi har gjort.
 
         //Skal så tilføje eller fjerne point afhængig af resultat.
         // Bare læse en gang fra databasen med reps, ligesom i profil. Sammenligne og tilføje til DB ud fra det.
@@ -100,6 +99,9 @@ public class WorkoutFinished extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
+
+        //Her den sletter comp fra bruger. Skal så bare fjernes i WorkoutActivity linje 146 når jeg får lavet det her.
+        myRefUser.child(user.getUser()).child("CompetitionID").removeValue();
 
 
         //Resten af træningstingene skal være nogenlunde det samme, skal bare tilføje billeder og den andens reps. Nok 1-2 dages godt arbejde. Færdig fredag agtig

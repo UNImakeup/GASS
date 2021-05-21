@@ -109,17 +109,18 @@ public class WorkoutFinished extends AppCompatActivity {
                 if(dataSnapshot.child(String.valueOf(user.getCompetitionID())).exists())
                     //I nedenstående skal jeg ikke uploade noget, bare tjekke hvad den nuværende bruger og anden brugers reps er.
                     //tre if sætninger, i tilfælde af at den nuværende eller tidligere bruger ikke har nogle reps.
+                    //1. tjekker om begge har reps. 2. tjekker om egne har og anden ikke har.
                     if(dataSnapshot.child(String.valueOf(user.getCompetitionID())).child(String.valueOf(user.getUserCompetitionID())).child("CompReps").exists()
                        && dataSnapshot.child(String.valueOf(user.getCompetitionID())).child(String.valueOf(user.getOtherUserCompID())).child("CompReps").exists()
                     ) {
                         currentUserCompReps = Integer.parseInt(dataSnapshot.child(String.valueOf(user.getCompetitionID())).child(String.valueOf(user.getUserCompetitionID())).child("CompReps").getValue(String.class));
                         otherUserCompReps = Integer.parseInt(dataSnapshot.child(String.valueOf(user.getCompetitionID())).child(String.valueOf(user.getOtherUserCompID())).child("CompReps").getValue(String.class));
                     }else if(dataSnapshot.child(String.valueOf(user.getCompetitionID())).child(String.valueOf(user.getUserCompetitionID())).child("CompReps").exists()
-                            && !dataSnapshot.child(String.valueOf(user.getOtherUserCompID())).child(String.valueOf(user.getUserCompetitionID())).child("CompReps").exists()
+                            && !dataSnapshot.child(String.valueOf(user.getCompetitionID())).child(String.valueOf(user.getOtherUserCompID())).child("CompReps").exists()
                     ){
                         currentUserCompReps = Integer.parseInt(dataSnapshot.child(String.valueOf(user.getCompetitionID())).child(String.valueOf(user.getUserCompetitionID())).child("CompReps").getValue(String.class));
                     }else if(!dataSnapshot.child(String.valueOf(user.getCompetitionID())).child(String.valueOf(user.getUserCompetitionID())).child("CompReps").exists()
-                            && dataSnapshot.child(String.valueOf(user.getOtherUserCompID())).child(String.valueOf(user.getUserCompetitionID())).child("CompReps").exists()
+                            && dataSnapshot.child(String.valueOf(user.getCompetitionID())).child(String.valueOf(user.getOtherUserCompID())).child("CompReps").exists()
                     ){
                         otherUserCompReps = Integer.parseInt(dataSnapshot.child(String.valueOf(user.getCompetitionID())).child(String.valueOf(user.getOtherUserCompID())).child("CompReps").getValue(String.class));
                     }

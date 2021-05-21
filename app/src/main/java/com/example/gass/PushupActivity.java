@@ -1,5 +1,6 @@
 package com.example.gass;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -15,8 +16,11 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
 public class PushupActivity extends AppCompatActivity {
@@ -32,6 +36,7 @@ public class PushupActivity extends AppCompatActivity {
     private FirebaseDatabase database;
     private DatabaseReference myRefUser;
     private DatabaseReference myRefComp;
+    TextView compReps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +47,8 @@ public class PushupActivity extends AppCompatActivity {
         proximitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         final TextView textview=(TextView) findViewById(R.id.textView);
         final TextView pushupTimer = findViewById(R.id.pushupTimer);
+        compReps = findViewById(R.id.compReps);
+
         final PushupExercise pushupExercise = new PushupExercise(); //Starter med nul reps
         exerciseData = ExerciseData.getInstance();
         millisInFuture = 10000;
@@ -57,6 +64,23 @@ public class PushupActivity extends AppCompatActivity {
             Toast.makeText(this, "Proximity sensor not available !", Toast.LENGTH_LONG).show();
             finish();
         }
+
+        myRefComp.addValueEventListener(new ValueEventListener() {
+            int otherUserCompReps = 0;
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                //Tjekker først om den anden brugers reps eksisterer. For derefter at hente dem og vise dem.
+                if(dataSnapshot.child(String.valueOf(user.getCompetitionID())).child(String.valueOf(user.getOtherUserCompID())).child("CompReps").exists()){
+                    otherUserCompReps = Integer.parseInt(dataSnapshot.child(String.valueOf(user.getCompetitionID())).child(String.valueOf(user.getOtherUserCompID())).child("CompReps").getValue(String.class));
+                }
+                compReps.setText("Enemy's Reps: " + otherUserCompReps);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         //Timer der kører før sensoren går igang og reps tælles. For at gøre sig klar.
         countDownTimerBefore = new CountDownTimer(4000, 1000) {

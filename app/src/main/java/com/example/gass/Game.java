@@ -40,15 +40,15 @@ public class Game extends Fragment {
         workoutButton = view.findViewById(R.id.workoutButton);
 
         //Kan også tilføje knappen der fører til p5, når jeg har
-        /*
+        //Nu går den bare til zenactivity i stedet.
         p5Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), p5Activity.class);
+                Intent intent = new Intent(getActivity(), ZenActivity.class);
                 startActivity(intent);
             }
         });
-         */
+
 
         workoutButton.setOnClickListener(new View.OnClickListener() {
             @Override

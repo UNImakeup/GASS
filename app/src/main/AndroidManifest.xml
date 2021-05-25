@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".PushupActivity"></activity>
+        <activity android:name=".ZenActivity"></activity>
+        <activity android:name=".PushupActivity" />
         <activity android:name=".WorkoutFinished" />
         <activity android:name=".WorkoutActivity" />
         <activity android:name=".CreateUserActivity" />

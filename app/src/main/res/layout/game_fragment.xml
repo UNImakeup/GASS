@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -14,16 +15,46 @@
         android:text="@string/game"
         android:textSize="30sp" />
 
-    <ImageButton android:layout_height="84dp" android:layout_width="98dp" android:src="?android:attr/textSelectHandle" android:layout_marginTop="130dp" android:layout_centerHorizontal="true" android:layout_alignParentTop="true" android:id="@+id/p5Button"/>
 
     <ImageButton
         android:id="@+id/workoutButton"
-        android:layout_width="99dp"
-        android:layout_height="62dp"
+        android:layout_width="137dp"
+        android:layout_height="81dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="243dp"
-        android:src="?android:attr/textSelectHandleLeft" />
+        android:src="@drawable/workout" />
+
+    <ImageButton
+        android:id="@+id/p5Button"
+        android:layout_width="137dp"
+        android:layout_height="81dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="137dp"
+        android:src="@drawable/meditation" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="152dp"
+        android:textStyle="bold"
+        android:textColor="#933c94"
+        android:text="Meditation" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="273dp"
+        android:textStyle="bold"
+        android:textColor="#933c94"
+        android:text="Workout" />
 
 
 </RelativeLayout>
